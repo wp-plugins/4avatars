@@ -4,8 +4,8 @@
 Plugin Name: 4Avatars
 Plugin URI: http://www.b4it.xorg.pl/4avatars/
 Description: This plugin allows you to add MyBlogLog.com or Gravatar.com or Avatars.pl avatars to Wordpress comments.
-Version: 0.01
-Author: <a href="http://www.b4it.xorg.pl/">b4it</a>
+Version: 0.1
+Author: b4it
 */
 
 function foravatars() 
