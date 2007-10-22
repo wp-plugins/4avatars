@@ -155,6 +155,6 @@ function foravatars_deactivate()
 }
 
 add_action('admin_menu', 'foravatars_menu');
-add_action('activate_4Avatars/4avatars.php', 'foravatars_activate');
-add_action('deactivate_4Avatars/4avatars.php', 'foravatars_deactivate');
+add_action('activate_4avatars/4avatars.php', 'foravatars_activate');
+add_action('deactivate_4avatars/4avatars.php', 'foravatars_deactivate');
 ?>
