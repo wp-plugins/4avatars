@@ -4,7 +4,7 @@ Donate link:
 Tags: avatars, comments
 Requires at least: 2.0.2
 Tested up to: 2.3
-Stable tag: 0.1
+Stable tag: 0.2
 
 This plugin allows you to add MyBlogLog.com or Gravatar.com or Avatars.pl avatars to Wordpress comments.
 
@@ -42,6 +42,12 @@ Use .foravatars
 Andrea Micheloni & Napolux for MyBlogLog hack
 
 == Changelog ==
+
+v0.2:
+
+* Some safe issue
+* Ability to change width of avatar
+* Some bugs connected with MyBlogLog avatars 
 
 v0.01:
 

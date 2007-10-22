@@ -4,71 +4,82 @@
 Plugin Name: 4Avatars
 Plugin URI: http://www.b4it.xorg.pl/4avatars/
 Description: This plugin allows you to add MyBlogLog.com or Gravatar.com or Avatars.pl avatars to Wordpress comments.
-Version: 0.1
+Version: 0.2
 Author: b4it
+Author URI: http://www.b4it.xorg.pl/
 */
 
 function foravatars() 
 {
-	if (get_option('avatar_site') == 'mybloglog') {
-		global $comment;
-		$url      = $comment->comment_author_url;
-		$email    = $comment->comment_author_email;
-		$nickname = $comment->comment_author;
-		if($email == "") {
-			$url = explode("/",$url);
-			$url = "http://" . $url[2];
-			$nickname = ""; 
-		}
-		if($url != ""  &&  $url != "http://")
-			$mybloglog_URL = "http://www.mybloglog.com/buzz/co_redir.php?t=&amp;href=" . $url . "&amp;n=". $nickname;
-		else
-			$mybloglog_URL = "http://www.mybloglog.com/buzz/co_redir.php?t=";
-
-		if($url != ""  &&  $url != "http://")
-			$mybloglog_IMG = "http://pub.mybloglog.com/coiserv.php?href=" . $url . "&amp;n=". $nickname;
-		else
-			$mybloglog_IMG = get_option("avatar_default"); 
+	global $comment;
+	$site = get_option('avatar_site');
+	$size = get_option('avatar_size');
+	$mail = $comment->comment_author_email;
+	$url  = $comment->comment_author_url;
+	$nickname = $comment->comment_author;
+	
+	switch ($site) {
+		case "mybloglog":
+			//MyBlogLog
+			if($mail == "") {
+				$url = explode("/",$url);
+				$url = "http://" . $url[2];
+				$nickname = ""; 
+			}
+			if($url != ""  &&  $url != "http://")
+				echo "<a rel=\"nofollow\" href=\"http://www.mybloglog.com/buzz/co_redir.php?t=&amp;href=" . $url . "&amp;n=". $nickname."\" target=\"_blank\" title=\"Check my profile on MyBlogLog.com!\">";
+	
+			if($url != ""  &&  $url != "http://")
+				$mybloglog_IMG = "http://pub.mybloglog.com/coiserv.php?href=" . $url . "&amp;n=". $nickname;
+			else
+				$mybloglog_IMG = get_option("avatar_default"); 
  
-		echo "<a rel=\"nofollow\" href=\"".$mybloglog_URL."\" target=\"_blank\" title=\"Check my profile on MyBlogLog.com!\">";
-		echo "<img class=\"foravatars\" src=\"".$mybloglog_IMG."\" onload=\"if (this.width > 48) { this.width = 48; this.height = 48; } if (this.width < 48) {  this.src='".get_option("avatar_default")."'; this.onload=void(null); }\" alt=\"4Avatars\" />";
-		echo "</a>";
-	} elseif (get_option('avatar_site') == 'gravatar') {
-		global $comment;
-		$mail    = $comment->comment_author_email;
-		echo "<img class=\"foravatars\" src=\"http://www.gravatar.com/avatar.php?gravatar_id=".md5($mail)."&amp;size=48&amp;default=".urlencode(get_option('avatar_default'))."\" />";
-	} elseif (get_option('avatar_site') == 'avatars') {
-		global $comment;
-		$mail    = $comment->comment_author_email;
-		echo "<img class=\"foravatars\" src=\"http://www.avatars.pl/avatar.php?id=".md5($mail)."&amp;size=48&amp;default=".urlencode(get_option('avatar_default'))."\" />";
+			echo "<img class=\"foravatars\" src=\"".$mybloglog_IMG."\" onload=\"if (this.width > ".$size.") { this.width = ".$size."; this.height = ".$size."; } if (this.width < ".$size.") { this.width = ".$size."; this.src='".get_option("avatar_default")."'; this.onload=void(null); }\" alt=\"4Avatars\" />";
+			
+			if($url != ""  &&  $url != "http://")
+				echo "</a>";
+			break;
+		case "gravatar":
+			//Gravatar
+			echo "<img class=\"foravatars\" src=\"http://www.gravatar.com/avatar.php?gravatar_id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars\" />";
+			break;
+		case "avatars":
+			//Avatars.pl
+			echo "<img class=\"foravatars\" src=\"http://www.avatars.pl/avatar.php?id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars\" />";
+			break;
 	}
 } 
 
 function foravatars_options()
 {
-	if (!empty($_POST['avatar_site']))
-	{
+	$blad = "";
+	if (!empty($_POST['avatar_site'])) {
 		// Małe zabezpieczenie
-		if (!in_array($_POST['avatar_site'], array('mybloglog', 'gravatar', 'avatars')))
-		{
+		if (!in_array($_POST['avatar_site'], array('mybloglog', 'gravatar', 'avatars'))) {
 			$_POST['avatar_site'] = 'mybloglog';
 		}
 
 		update_option('avatar_site', $_POST['avatar_site']);
-	}
+	} else 
+		$blad .= "<br />Wybież stronę.";
 
-	if (!empty($_POST['avatar_default']))
-	{
+	if (!empty($_POST['avatar_default'])) {
 		update_option('avatar_default', $_POST['avatar_default']);
-	}
+	} else 
+		$blad .= "<br />Podaj adres podstawowego avatara.";
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST')
-	{
-	?>
+	if (!empty($_POST['avatar_size']) && is_numeric($_POST['avatar_size'])) {
+		update_option('avatar_size', $_POST['avatar_size']);
+	} else 
+		$blad .= "<br />Rozmiar avatara nie jest liczbą.";
 
-	<div id="message" class="updated fade"><p><strong>Options saved!</strong></p></div>
-
-	<?php
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		if ($blad != "") {
+			echo "<div id=\"message\" class=\"error fade\"><p><strong>Zonk:".$blad."</strong></p></div>";
+			$blad = "";
+		} else {
+			echo "<div id=\"message\" class=\"updated fade\"><p><strong>Options saved!</strong></p></div>";
+		}
 	}
 ?>
 
@@ -91,6 +102,14 @@ function foravatars_options()
 					<input type="radio" name="avatar_site" value="mybloglog" <?php if (get_option('avatar_site') == 'mybloglog') echo "checked=\"checked\"" ?>> MyBlogLog<br />
 					<input type="radio" name="avatar_site" value="gravatar" <?php if (get_option('avatar_site') == 'gravatar') echo "checked=\"checked\"" ?>> Gravatar<br />
 					<input type="radio" name="avatar_site" value="avatars" <?php if (get_option('avatar_site') == 'avatars') echo "checked=\"checked\"" ?>> Avatars.pl
+				</td>
+			</tr>
+
+			<tr valign="top">
+				<th width="33%" scope="row">Avatar width:</th>
+				<td>
+					<input name="avatar_size" type="text" value="<?php echo get_option('avatar_size'); ?>" /><br />
+					In pixels.
 				</td>
 			</tr>
 
@@ -120,8 +139,10 @@ function foravatars_menu()
 function foravatars_activate()
 {
 	// Dodajemy opcje
-	add_option('avatar_site', 'mybloglog', 'Site with avatars.');
-	add_option('avatar_default', '/wp-content/plugins/4avatars/default.gif', 'URL to default avatar.');
+	add_option("avatar_site", 'avatars', 'Site with avatars.', 'yes');
+	$adres = get_option('siteurl')."/wp-content/plugins/4avatars/default.gif";
+	add_option("avatar_default", $adres, 'URL to default avatar.', 'yes');
+	add_option("avatar_size", '48', 'Width of avatar.', 'yes');
 }
 
 
@@ -130,9 +151,10 @@ function foravatars_deactivate()
 	// Zamiatamy...
 	delete_option('avatar_site');
 	delete_option('avatar_default');
+	delete_option('avatar_size');
 }
 
 add_action('admin_menu', 'foravatars_menu');
-add_action('activate_foravatars', 'foravatars_activate');
-add_action('deactivate_foravatars', 'foravatars_deactivate');
+add_action('activate_4Avatars/4avatars.php', 'foravatars_activate');
+add_action('deactivate_4Avatars/4avatars.php', 'foravatars_deactivate');
 ?>
