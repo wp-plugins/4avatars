@@ -4,7 +4,7 @@
 Plugin Name: 4Avatars
 Plugin URI: http://www.b4it.xorg.pl/4avatars/
 Description: This plugin allows you to add MyBlogLog.com or Gravatar.com or Avatars.pl avatars to Wordpress comments.
-Version: 0.2
+Version: 0.3.1
 Author: b4it
 Author URI: http://www.b4it.xorg.pl/
 */
@@ -34,18 +34,18 @@ function foravatars()
 			else
 				$mybloglog_IMG = get_option("avatar_default"); 
  
-			echo "<img class=\"foravatars\" src=\"".$mybloglog_IMG."\" onload=\"if (this.width > ".$size.") { this.width = ".$size."; this.height = ".$size."; } if (this.width < ".$size.") { this.width = ".$size."; this.src='".get_option("avatar_default")."'; this.onload=void(null); }\" alt=\"4Avatars\" />";
+			echo "<img class=\"foravatars\" src=\"".$mybloglog_IMG."\" onload=\"if (this.width > ".$size.") { this.width = ".$size."; this.height = ".$size."; } if (this.width < ".$size.") { this.width = ".$size."; this.src='".get_option("avatar_default")."'; this.onload=void(null); }\" alt=\"4Avatars v0.3.1\" />";
 			
 			if($url != ""  &&  $url != "http://")
 				echo "</a>";
 			break;
 		case "gravatar":
 			//Gravatar
-			echo "<img class=\"foravatars\" src=\"http://www.gravatar.com/avatar.php?gravatar_id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars\" />";
+			echo "<img class=\"foravatars\" src=\"http://www.gravatar.com/avatar.php?gravatar_id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars v0.3.1 v0.3.1\" />";
 			break;
 		case "avatars":
 			//Avatars.pl
-			echo "<img class=\"foravatars\" src=\"http://www.avatars.pl/avatar.php?id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars\" />";
+			echo "<img class=\"foravatars\" src=\"http://www.avatars.pl/avatar.php?id=".md5($mail)."&amp;size=".$size."&amp;default=".urlencode(get_option('avatar_default'))."\" alt=\"4Avatars v0.3.1\" />";
 			break;
 	}
 } 
