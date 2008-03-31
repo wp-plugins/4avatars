@@ -43,6 +43,10 @@ Andrea Micheloni & Napolux for MyBlogLog hack
 
 == Changelog ==
 
+v0.3:
+
+* Now work with WordPress 2.5
+
 v0.2:
 
 * Some safe issue
